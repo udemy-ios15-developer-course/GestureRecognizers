@@ -24,6 +24,7 @@ class ViewController: UIViewController {
         index = 0
         collection.append(ImageCollection(image: UIImage(named: "family")!, title: "Family"))
         collection.append(ImageCollection(image: UIImage(named: "stella")!, title: "Stella"))
+        collection.append(ImageCollection(image: UIImage(named: "wallpaper")!, title: "Wallpaper"))
         
         imageView.image = collection[index].image
         imageText.text = collection[index].title
