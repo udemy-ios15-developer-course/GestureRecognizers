@@ -22,11 +22,15 @@ class ViewController: UIViewController {
         imageView.addGestureRecognizer(gestureRecognizer)
         
         index = 0
-        collection.append(ImageCollection(image: UIImage(named: "family")!, title: "Family"))
-        collection.append(ImageCollection(image: UIImage(named: "stella")!, title: "Stella"))
-        collection.append(ImageCollection(image: UIImage(named: "wallpaper")!, title: "Wallpaper"))
+        collection.append(ImageCollection(image: "family", title: "Family"))
+        collection.append(ImageCollection(image: "stella", title: "Stella"))
+        collection.append(ImageCollection(image: "wallpaper", title: "Wallpaper"))
         
-        imageView.image = collection[index].image
+        setImage(index: index)
+    }
+    
+    private func setImage(index: Int) {
+        imageView.image = UIImage(named: collection[index].image)!
         imageText.text = collection[index].title
     }
                                                        
@@ -37,13 +41,19 @@ class ViewController: UIViewController {
             index = 0
         }
         
-        imageView.image = collection[index].image
-        imageText.text = collection[index].title
+        setImage(index: index)
     }
     
     private struct ImageCollection {
-        var image: UIImage
+        var image: String
         var title: String
     }
 }
+                                          
+/*
+ Experimented with loading the images on demand, instead of all at once.
+ I had 92.4MB when putting UIImage into the image collection. It went to 92.6MB whint I loaded created the UIImage on demand.
+ I assume ios is being smart with it's resources. Probably if there were a lot of images, I wouldn't want to try to load them
+    all in viewDidLoad?
+ */
 
