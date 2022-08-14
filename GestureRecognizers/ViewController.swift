@@ -32,6 +32,14 @@ class ViewController: UIViewController {
     private func setImage(index: Int) {
         imageView.image = UIImage(named: collection[index].image)!
         imageText.text = collection[index].title
+        let ciColor = CIColor(color: imageView.image!.averageColor!)
+            
+        // get the current values and make the difference from white:
+        let compRed: CGFloat = 1.0 - ciColor.red
+        let compGreen: CGFloat = 1.0 - ciColor.green
+        let compBlue: CGFloat = 1.0 - ciColor.blue
+            
+        self.view.backgroundColor = UIColor(red: compRed, green: compGreen, blue: compBlue, alpha: 1.0)
     }
                                                        
     @objc
@@ -49,11 +57,24 @@ class ViewController: UIViewController {
         var title: String
     }
 }
-                                          
-/*
- Experimented with loading the images on demand, instead of all at once.
- I had 92.4MB when putting UIImage into the image collection. It went to 92.6MB whint I loaded created the UIImage on demand.
- I assume ios is being smart with it's resources. Probably if there were a lot of images, I wouldn't want to try to load them
-    all in viewDidLoad?
- */
+
+
+//
+// Credit: https://www.hackingwithswift.com/example-code/media/how-to-read-the-average-color-of-a-uiimage-using-ciareaaverage
+//
+extension UIImage {
+    var averageColor: UIColor? {
+        guard let inputImage = CIImage(image: self) else { return nil }
+        let extentVector = CIVector(x: inputImage.extent.origin.x, y: inputImage.extent.origin.y, z: inputImage.extent.size.width, w: inputImage.extent.size.height)
+
+        guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: extentVector]) else { return nil }
+        guard let outputImage = filter.outputImage else { return nil }
+
+        var bitmap = [UInt8](repeating: 0, count: 4)
+        let context = CIContext(options: [.workingColorSpace: kCFNull!])
+        context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: nil)
+
+        return UIColor(red: CGFloat(bitmap[0]) / 255, green: CGFloat(bitmap[1]) / 255, blue: CGFloat(bitmap[2]) / 255, alpha: CGFloat(bitmap[3]) / 255)
+    }
+}
 
